@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>AndroidAuthTool | Free OSINT Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a1a 0%, #12122a 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #0f0f1f, #1a1a2e);
+            border-radius: 20px;
+            padding: 20px 25px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .header h1 .main-name {
+            color: #ff4757;
+        }
+
+        .header h1 .sub-name {
+            color: #fff;
+            font-size: 1.2rem;
+        }
+
+        .tagline {
+            color: #ffaa44;
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+
+        .header p {
+            color: #a0a0a0;
+            font-size: 0.85rem;
+            margin-top: 8px;
+        }
+
+        .badge-container {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        .total-badge {
+            display: inline-block;
+            background: #ff4757;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+        }
+
+        .credit-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.1);
+            color: #ffaa44;
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            text-decoration: none;
+        }
+
+        .credit-badge:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* Red Numbered Buttons Grid */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(95px, 1fr));
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .tool-btn {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 12px 5px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            box-shadow: 0 3px 8px rgba(220,38,38,0.3);
+        }
+
+        .tool-btn:hover {
+            background: #b91c1c;
+            transform: translateY(-2px);
+        }
+
+        .tool-btn small {
+            display: block;
+            font-size: 0.65rem;
+            font-weight: normal;
+            opacity: 0.9;
+        }
+
+        /* Input Section */
+        .input-section {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .current-tool {
+            color: #ffaa44;
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .current-tool span {
+            background: #ff4757;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 14px 18px;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+            background: rgba(0,0,0,0.4);
+            color: white;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .input-group input:focus {
+            border-color: #ff4757;
+        }
+
+        .input-group input::placeholder {
+            color: #666;
+        }
+
+        .fetch-btn {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .fetch-btn:hover {
+            background: #ff6b81;
+        }
+
+        /* Result Card */
+        .result-card {
+            background: linear-gradient(135deg, #1e1e2e, #252538);
+            border-radius: 20px;
+            padding: 25px;
+            border-left: 5px solid #ff4757;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .result-card h3 {
+            color: #ff4757;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 10px;
+        }
+
+        .result-item {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .result-label {
+            width: 130px;
+            font-weight: bold;
+            color: #ffaa44;
+        }
+
+        .result-value {
+            flex: 1;
+            color: #e0e0e0;
+            word-break: break-all;
+        }
+
+        .error-msg {
+            color: #ff6b6b;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .footer-credit {
+            margin-top: 20px;
+            text-align: center;
+            padding: 15px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+        }
+
+        .footer-credit p {
+            color: #888;
+            font-size: 0.85rem;
+        }
+
+        .footer-credit a {
+            color: #ffaa44;
+            text-decoration: none;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 30px;
+            color: #ffaa44;
+        }
+
+        @media (max-width: 600px) {
+            .result-label {
+                width: 100%;
+                margin-bottom: 5px;
+            }
+            .tools-grid {
+                grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            }
+            .tool-btn {
+                font-size: 0.75rem;
+                padding: 8px 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header with AndroidAuthTool Name -->
+        <div class="header">
+            <h1>
+                <span class="main-name">androidauthtool</span>
+                <span class="sub-name"> (Indian Admin)</span>
+            </h1>
+            <div class="tagline">🔓 FREE OSINT TOOLS HUB 🔓</div>
+            <p>Telegram ID → Number | IP Tracker | Instagram | GST | Vehicle | PAN | Pincode | IFSC</p>
+            <div class="badge-container">
+                <span class="total-badge">📊 10+ Tools Available</span>
+                <a href="https://t.me/sauravsingh2111" class="credit-badge" target="_blank">👑 Owner: @sauravsingh2111</a>
+                <a href="https://t.me/nano_osintbot" class="credit-badge" target="_blank">🤖 Bot: @nano_osintbot</a>
+            </div>
+        </div>
+
+        <!-- Red Numbered Buttons -->
+        <div class="tools-grid" id="toolsGrid">
+            <button class="tool-btn" data-tool="tg">1<br><small>TG to Number</small></button>
+            <button class="tool-btn" data-tool="ip">2<br><small>IP Tracker</small></button>
+            <button class="tool-btn" data-tool="instagram">3<br><small>Instagram</small></button>
+            <button class="tool-btn" data-tool="mobile">4<br><small>Mobile Lookup</small></button>
+            <button class="tool-btn" data-tool="gst">5<br><small>GST Info</small></button>
+            <button class="tool-btn" data-tool="vehicle">6<br><small>Vehicle RC</small></button>
+            <button class="tool-btn" data-tool="pan">7<br><small>PAN Info</small></button>
+            <button class="tool-btn" data-tool="pincode">8<br><small>Pincode</small></button>
+            <button class="tool-btn" data-tool="ifsc">9<br><small>IFSC Code</small></button>
+            <button class="tool-btn" data-tool="social">10<br><small>Social DL</small></button>
+        </div>
+
+        <!-- Input Section -->
+        <div class="input-section">
+            <div class="current-tool" id="currentToolDisplay">
+                📌 <span>Telegram ID to Number</span>
+            </div>
+            <div class="input-group">
+                <input type="text" id="queryInput" placeholder="Enter Telegram ID / IP / Username / Number / URL..." autocomplete="off">
+                <button class="fetch-btn" id="fetchBtn">🔍 FETCH DATA</button>
+            </div>
+        </div>
+
+        <!-- Result Card -->
+        <div class="result-card" id="resultCard">
+            <h3>📋 RESULT</h3>
+            <div id="resultContent">
+                <div style="text-align: center; color: #888; padding: 20px;">
+                    Select a tool and enter query above
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Credit -->
+        <div class="footer-credit">
+            <p>🚀 Powered by <strong>androidauthtool (Indian Admin)</strong> | All APIs are free to use</p>
+            <p>📢 Share this tool: <a href="#" id="shareLink">Copy Link</a> | <a href="https://t.me/sauravsingh2111" target="_blank">Join Channel</a></p>
+        </div>
+    </div>
+
+    <script>
+        let currentTool = 'tg';
+        
+        // Tool selection
+        document.querySelectorAll('.tool-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                currentTool = btn.dataset.tool;
+                const toolName = btn.innerText.split('\n')[0].replace(/[0-9]/g, '').trim();
+                document.getElementById('currentToolDisplay').innerHTML = `📌 <span>${btn.innerText.replace(/\n/g, ' ')}</span>`;
+                
+                // Update placeholder
+                const input = document.getElementById('queryInput');
+                switch(currentTool) {
+                    case 'tg': input.placeholder = 'Enter Telegram ID or Username (e.g., 5880204402 or @username)'; break;
+                    case 'ip': input.placeholder = 'Enter IP Address (e.g., 8.8.8.8)'; break;
+                    case 'instagram': input.placeholder = 'Enter Instagram Username (e.g., modiji)'; break;
+                    case 'mobile': input.placeholder = 'Enter Mobile Number (e.g., 9918824247)'; break;
+                    case 'gst': input.placeholder = 'Enter GST Number (e.g., 27AABCS1234A1Z)'; break;
+                    case 'vehicle': input.placeholder = 'Enter Vehicle RC Number (e.g., HR26AB1234)'; break;
+                    case 'pan': input.placeholder = 'Enter PAN Number (e.g., ABCDE1234F)'; break;
+                    case 'pincode': input.placeholder = 'Enter Pincode (e.g., 110001)'; break;
+                    case 'ifsc': input.placeholder = 'Enter IFSC Code (e.g., SBIN0001234)'; break;
+                    case 'social': input.placeholder = 'Enter Instagram/YouTube/TikTok URL'; break;
+                }
+            });
+        });
+        
+        // Fetch function
+        document.getElementById('fetchBtn').addEventListener('click', async () => {
+            const query = document.getElementById('queryInput').value.trim();
+            if (!query) {
+                document.getElementById('resultContent').innerHTML = '<div class="error-msg">⚠️ Please enter a value</div>';
+                return;
+            }
+            
+            document.getElementById('resultContent').innerHTML = '<div class="loading">⏳ Fetching data... Please wait</div>';
+            
+            let apiUrl = '';
+            let isJson = true;
+            
+            switch(currentTool) {
+                case 'tg':
+                    // TG to Number API
+                    let tgId = query.replace('@', '');
+                    apiUrl = `https://tg-2-num-api-org.vercel.app/api/search?userid=${tgId}`;
+                    break;
+                case 'ip':
+                    apiUrl = `https://ipapi.co/${query}/json/`;
+                    break;
+                case 'mobile':
+                    apiUrl = `https://yash-code-with-ai.alphamovies.workers.dev/?num=${query}&key=7189814021`;
+                    break;
+                case 'gst':
+                    apiUrl = `https://gst-return-status.p.rapidapi.com/free/gstin/${query}`;
+                    isJson = false;
+                    break;
+                case 'vehicle':
+                    apiUrl = `https://api.vehiclereg.in/rc/${query}`;
+                    break;
+                default:
+                    document.getElementById('resultContent').innerHTML = '<div class="error-msg">⏳ Tool API is being integrated. Coming soon!</div>';
+                    return;
+            }
+            
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                displayResult(data, currentTool);
+            } catch (error) {
+                document.getElementById('resultContent').innerHTML = `<div class="error-msg">❌ API Error: ${error.message}</div>`;
+            }
+        });
+        
+        function displayResult(data, tool) {
+            let html = '';
+            
+            if (tool === 'tg' && data.status === 'success') {
+                html = `
+                    <div class="result-item"><div class="result-label">👤 Name:</div><div class="result-value">${data.data?.name || 'N/A'}</div></div>
+                    <div class="result-item"><div class="result-label">📱 Mobile Number:</div><div class="result-value">${data.data?.country_code || ''} ${data.data?.number || 'N/A'}</div></div>
+                    <div class="result-item"><div class="result-label">🌍 Country:</div><div class="result-value">${data.data?.country || 'N/A'}</div></div>
+                    <div class="result-item"><div class="result-label">🆔 User ID:</div><div class="result-value">${data.searched_userid || 'N/A'}</div></div>
+                `;
+            } 
+            else if (tool === 'mobile' && data.status === true) {
+                const info = data.data?.[0] || {};
+                html = `
+                    <div class="result-item"><div class="result-label">👤 Name:</div><div class="result-value">${info.name || 'N/A'}</div></div>
+                    <div class="result-item"><div class="result-label">👨 Father Name:</div><div class="result-value">${info.father_name || 'N/A'}</div></div>
+                    <div class="result-item"><div class="result-label">📱 Mobile:</div><div class="result-value">${info.mobile || 'N/A'}</div></div>
+                    <div class="result-item"><div class="result-label">📞 Alt Mobile:</div><div class="result-value">${info.alt_mobile || 'N/A'}</div></div>
+                    <div class="result-item"><div class="result-label">📍 Address:</div><div class="result-value">${info.address || 'N/A'}</div></div>
+                    <div class="result-item"><div class="result-label">📡 Circle:</div><div class="result-value">${info.circle || 'N/A'}</div></div>
+                `;
+            }
+            else if (tool === 'ip') {
+                html = `
+                    <div class="result-item"><div class="result-label">🌍 IP:</div><div class="result-value">${data.ip || query}</div></div>
+                    <div class="result-item"><div class="result-label">📍 City:</div><div class="result-value">${data.city || 'N/A'}</div></div>
+                    <div class="result-item"><div class="result-label">🗺️ Region:</div><div class="result-value">${data.region || 'N/A'}</div></div>
+                    <div class="result-item"><div class="result-label">🏙️ Country:</div><div class="result-value">${data.country_name || data.country || 'N/A'}</div></div>
+                    <div class="result-item"><div class="result-label">📡 ISP:</div><div class="result-value">${data.org || data.isp || 'N/A'}</div></div>
+                    <div class="result-item"><div class="result-label">📍 Coordinates:</div><div class="result-value">${data.latitude || 'N/A'}, ${data.longitude || 'N/A'}</div></div>
+                `;
+            }
+            else {
+                html = `<div class="error-msg">⚠️ Data format not supported yet. Tool under development.</div>`;
+            }
+            
+            // Add branding footer
+            html += `
+                <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); text-align: center; font-size: 0.8rem;">
+                    🔹 Powered by <strong>androidauthtool (Indian Admin)</strong> 🔹<br>
+                    👑 Owner: @sauravsingh2111 | 🤖 Bot: @nano_osintbot
+                </div>
+            `;
+            
+            document.getElementById('resultContent').innerHTML = html;
+        }
+        
+        // Share link function
+        document.getElementById('shareLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            const url = window.location.href;
+            navigator.clipboard.writeText(url);
+            alert('✅ Link copied! Share with everyone 🚀');
+        });
+    </script>
+</body>
+</html>
